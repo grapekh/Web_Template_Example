@@ -1,0 +1,19 @@
+{{define "asic.html"}}
+{{template "header.html" .}}
+
+  <h1>This is ./www/asic.html.</h1>
+  <H2>The variables are:</H2>
+  <UL>
+    <LI>From file: Greeting: {{.Greeting}}</LI>
+    <LI>From file: deviceModel: {{.DeviceModel}}</LI>
+    <LI>From file: Username: {{.Username}}</LI>
+    <LI>Calculated: Weekday: {{.Weekday}}</LI>
+    <LI>Passed in: PageTitle: {{.PageTitle}}</LI>
+  </UL>
+
+  <H2>Test with Style Sheets</H2>
+  <h4>{{.Greeting}} World</h4>
+  <P>Today is: </P> <p style="font-weight: bold; color: green;">{{.Weekday}}</p>
+
+{{template "footer.html" .}}
+{{end}}

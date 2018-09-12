@@ -1,0 +1,18 @@
+{{define "index.html"}}
+{{template "header.html" .}}
+
+  <h1>This is ./www/index.html.</h1>
+  <H2>The variables are:</H2>
+  <UL>
+    <LI>From file: Greeting: {{.Greeting}}</LI>
+    <LI>Calculated: Weekday: {{.Weekday}}</LI>
+  </UL>
+
+  <H2>Test with Style Sheets</H2>
+  <h4>{{.Greeting}} World</h4>
+  <P>Today is: </P> <p style="font-weight: bold; color: green;">{{.Weekday}}</p>
+
+  <P>If you want to see an ASIC, click <A HREF="/asic.html">here</A></P>
+
+{{template "footer.html" .}}
+{{end}}
