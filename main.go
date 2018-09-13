@@ -33,6 +33,9 @@
  *		Add Dashboard Page, with a couple of protected pages
  *		Add CRUD Capability. 
  * 
+ *
+ * Version 1.0 - Grapek - 20180904 - Original 
+ * Version 1.1 - Grapek - 20180905 - Added 404 not found check for index handler and favicon handler
  */
 
 package main
@@ -46,6 +49,7 @@ import (
 	"log"
 	"fmt"
 	"strings"
+	"errors"
 )
 
 // Generic global variables to be used to manage template data for any html page. 
@@ -76,6 +80,11 @@ type asic2PageData struct {
 	DeviceModel string
 }
 
+type errorPageData struct {
+    PageTitle string
+	ErrorMsg string
+}
+
 // greeting structure type definition. matches data in config.json
 type config struct {
 	Greeting string
@@ -99,6 +108,7 @@ func main() {
 	http.HandleFunc("/index.html", handleIndexPage)
 	http.HandleFunc("/asic.html",  handleAsicPage)
 	http.HandleFunc("/asic2.html",  handleAsic2Page)
+	http.HandleFunc("/favicon.ico", handleFavicon)
 
 	// Start up the webserver 
 	log.Fatal(http.ListenAndServe(":8000", nil))
@@ -123,6 +133,13 @@ func loadTemplates() {
     fmt.Printf("allFiles is: %v\n", allFiles)
     t, err = template.ParseFiles(allFiles...) 	// parses all .tmpl or ./html files in the 'www' folder
 
+    /*
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    */
+
 }
 
 // Get raw data from the json file called "config.json"
@@ -142,7 +159,10 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 
 	// we should really display an error html page but this is fine - display on terminal and die. 
 	if (err != nil) {
+			fmt.Println("In display: got an error: =%v\n", err)
 		    log.Println(err)
+		    http.Error(w, err.Error(), http.StatusInternalServerError)
+		    renderErrorPage(w, err)
 	}
 }
 
@@ -151,6 +171,23 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 
 func handleIndexPage(w http.ResponseWriter, r *http.Request) {
 	// fill the structure template with actual values calculated and read in accordingly. 
+
+	// This on eis pretty simple - 
+	// check to see if the page is "/" or "/index.html"
+	// Anything else is an error. 
+	if r.URL.Path != "/" && r.URL.Path != "/index.html" {
+		fmt.Println("Found a page for index which was not index... 404 should be sent. ")
+
+		// Build an actual error message...
+		message := fmt.Sprintf("Error 404: Page %s not found", r.URL.Path)
+		errorMessage := errors.New(message)
+
+		// Call Render Error  Page with error message. 
+		renderErrorPage(w, errorMessage)
+
+        return
+    }
+
 	PageTitle := "Home Page"
 	indexPageData := &indexPageData{PageTitle, time.Now().Weekday(), c.Greeting}
 	fmt.Printf("Handling index.html page.  indexPageData = %v\n", indexPageData)
@@ -176,4 +213,21 @@ func handleAsic2Page(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Handling asic2.html page.  asic2PageData = %v\n", asic2PageData)
 
 	display(w, "asic2.html", &asic2PageData)
+}
+
+func handleFavicon(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Handling favicon.ico...\n")
+    w.Header().Set("Content-Type", "image/x-icon")
+	http.ServeFile(w, r, "www/favicon.ico")
+}
+
+func renderErrorPage(w http.ResponseWriter, errorMsg error) {
+
+	fmt.Printf("Here we are in renderErrorPage: error message is: %v\n", errorMsg)
+	
+	PageTitle := "Error"
+	errorPageData := &errorPageData{PageTitle, errorMsg.Error()}
+
+	display(w, "error.html", &errorPageData)		
+
 }
