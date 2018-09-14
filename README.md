@@ -20,6 +20,7 @@ TODO:
 ````
 go get github.com/gorilla/securecookie
 go build main.go
+````
 
 # Basic Testing and sample outputs
 The output on the console is fairly verbose -I added lots of debug line showing what is done as each transation is hit
