@@ -1,10 +1,12 @@
 # Web_Template_Example
-Small test program which demonstrates launching of a basic web server, 
- *   This is a small test program which demonstrates launching of a basic web server on port 8000.
- *   This prototype has multiple pages, including login/logout functionality. 
+Small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality 
+ *   Launching of a basic web server on port 8000.
+ *   This prototype has multiple pages, including login/logout functionality using cookies
  *   This prototype utilizes templates and logic is built into the template pages. 
  *   The "internal.html" page requires to be logged in. 
  *   This prototype uses Gorilla libraries for secure cookies
+ *   The prototype addresses 404 not found pages properly, and handles / and /index.html as the home page. 
+ *   The prototype addresses the correct way to deal with favicon.ico when running as http server
 
 TODO: 
  * Add Dashboard Page
