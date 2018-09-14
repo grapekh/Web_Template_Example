@@ -1,0 +1,41 @@
+{{define "login.html"}}
+{{template "header.html" .}}
+
+<P>This is the login page... </P>
+<h1>Login</h1>
+
+ <p>The variables passed in are:</p>
+  <UL>
+    <LI>Username: {{.Username}}</LI>
+    <LI>LoggedIn: {{.LoggedIn}}</LI>
+  </UL>
+
+{{ if (eq .LoggedIn true) }}
+
+    <P>You are currenty logged in as: <strong> {{.Username}}</strong>...</P>
+    <form method="post" action="/logout.html">
+        <button type="submit">Logout {{.Username}}</button>
+    </form>
+
+{{ else }}
+
+
+  {{ if (eq .Username "") }}
+    <P>You are not logged in yet... Please enter credentials:</P> 
+  {{ else }}
+    <P>Error, the credentials entered for <strong>{{ .Username }}</strong> are not valid: Please try again</P>
+  {{end}}
+
+<form method="post" action="/login.html">
+    <label for="name">User name</label>
+    <input type="text" id="name" name="name">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password">
+    <button type="submit">Login</button>
+</form>
+
+{{ end }}
+
+
+{{template "footer.html" .}}
+{{end}}

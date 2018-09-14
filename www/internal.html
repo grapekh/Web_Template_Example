@@ -1,0 +1,22 @@
+{{define "internal.html"}}
+{{template "header.html" .}}
+
+<h1>Internal Page Requiring Login (Template Test)</h1>
+
+{{ if (eq .LoggedIn false) }}
+    <P>This is an internal page... <STRONG>You must be logged in to access it - please <A HREF="/login.html">login</A> first.</STRONG></P>
+    
+{{else}}
+    <P>You are currenty logged in as: <strong> {{.Username}} </strong>...</P>
+
+
+    <P>This is an internal page which requires being logged in... </P>
+
+    <form method="post" action="/logout.html">
+        <button type="submit">Logout {{.Username}}</button>
+    </form>
+
+{{end}}
+
+{{template "footer.html" .}}
+{{end}}
