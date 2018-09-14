@@ -7,8 +7,8 @@ Small test program which demonstrates launching of a basic web server,
  *   This prototype uses Gorilla libraries for secure cookies
 
 TODO: 
-Add Dashboard Page
-Add Crud Capability (be logged in to delete/update data, but view from everyone)
+ * Add Dashboard Page
+*  Add Crud Capability (be logged in to delete/update data, but view from everyone)
 
 
 # Basic Testing and sample outputs
