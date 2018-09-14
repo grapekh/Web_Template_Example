@@ -1,20 +1,22 @@
 # Web_Template_Example
 I have always built small websites in Apache/PHP and was intrigued at the notion that we could get a standard full function web server built in very few lines of code.   This code is portable and works on any computer (Windows, Mac, Unix veriants), and depends only on GO Language.  
 
-This is a small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality.  It does the following: 
+This is a small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality. I wanted to build a small site which deals with all the major pieces needed for a functional user site.  It handles Templates and also deals with reading and parsing json files.   Specifically, it does the following: 
 
- *   Launching of a basic web server on port 8000.
- *   This prototype has multiple pages, including login/logout functionality using cookies
- *   Login/Logout functionality is basic for the sake of this exercise.  It uses local variables to check against, but could easily be modified to add the users in a database - but that is a different exercise.
+ *   Launches a basic web server on port 8000.
+ *   It has multiple pages, including login/logout functionality using cookies
+ *   The Login/Logout functionality is basic for the sake of this exercise.  It uses local variables to check login credentials
+ *      but could easily be modified to add the users in a database - but that is a different exercise.
  *   This prototype utilizes templates and logic is built into the template pages. 
- *   The "internal.html" page requires to be logged in. 
+ *   The "internal.html" page requires to be logged in prior to displaying data from it. 
  *   This prototype uses Gorilla libraries for secure cookies
- *   The prototype addresses 404 not found pages properly, and handles / and /index.html as the home page. 
- *   The prototype addresses the correct way to deal with favicon.ico when running as http server
+ *   The prototype addresses 404 not found pages properly, and handles "/" and "/index.html" as the home page. 
+ *   The prototype is coded to deal with favicon.ico when running as http server
+ *   This prototype reads a json file and uses the data on the "asic" pages
 
 TODO: 
- * Add Dashboard Page
-*  Add Crud Capability (be logged in to delete/update data, but view from everyone)
+ *  Add Dashboard Page
+ *  Add Crud Capability (be logged in to delete/update data, but view from everyone)
 
 # Requirements and Building
 ````
@@ -30,6 +32,14 @@ To view this, bring up a web browser as follows:
 ```` 
 http://localhost:8000
 ````
+
+# Login Credentials
+The credentials are coded in the main.go code, but are as follows
+```` 
+username: howie
+password: 123
+````
+
 
 This is what the testing on a simple windows box looks like (note, you will have to log into a web browser as follows
 ````
