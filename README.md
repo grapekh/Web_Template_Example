@@ -16,6 +16,10 @@ TODO:
  * Add Dashboard Page
 *  Add Crud Capability (be logged in to delete/update data, but view from everyone)
 
+# Requirements and Building
+````
+go get github.com/gorilla/securecookie
+go build main.go
 
 # Basic Testing and sample outputs
 The output on the console is fairly verbose -I added lots of debug line showing what is done as each transation is hit
