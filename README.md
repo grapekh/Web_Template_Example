@@ -1,7 +1,11 @@
 # Web_Template_Example
-Small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality 
+I have always built small websites in Apache/PHP and was intrigued at the notion that we could get a standard full function web server built in very few lines of code.   This code is portable and works on any computer (Windows, Mac, Unix veriants), and depends only on GO Language.  
+
+This is a small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality.  It does the following: 
+
  *   Launching of a basic web server on port 8000.
  *   This prototype has multiple pages, including login/logout functionality using cookies
+ *   Login/Logout functionality is basic for the sake of this exercise.  It uses local variables to check against, but could easily be modified to add the users in a database - but that is a different exercise.
  *   This prototype utilizes templates and logic is built into the template pages. 
  *   The "internal.html" page requires to be logged in. 
  *   This prototype uses Gorilla libraries for secure cookies
