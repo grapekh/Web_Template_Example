@@ -1,7 +1,9 @@
 # Web_Template_Example
 I have always built small websites in Apache/PHP and was intrigued at the notion that we could get a standard full function web server built in very few lines of code.   This code is portable and works on any computer (Windows, Mac, Unix veriants), and depends only on GO Language.  
 
-This is a small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality. I wanted to build a small site which deals with all the major pieces needed for a functional user site.  It handles Templates and also deals with reading and parsing json files.   Specifically, it does the following: 
+This is a small test program written entirely in Go Language which demonstrates launching of a basic web server, and common functionality. I wanted to build a small site which deals with all the major pieces needed for a functional user site.  It handles Templates and also deals with reading and parsing json files.  For testing purposes, I'm not logging data to a file, just lots of debug information to the console.  I suppose i could use my logging library, but I didn't think it was necessary here. 
+
+Specifically this prorotype does the following: 
 
  *   Launches a basic web server on port 8000.
  *   It has multiple pages, including login/logout functionality using cookies
@@ -39,8 +41,8 @@ username: howie
 password: 123
 ````
 
-
-This is what the testing on a simple windows box looks like (note, you will have to log into a web browser as follows
+# Sample Console Output
+This is what the testing on a simple windows box looks like.  I clicked on each page from the website, logged in and tried a bad login combination.  
 ````
 C:\Users\grapekh\go\src\simple_go_httpd_template_test>main.exe
 Test Website for single page with templates... launch http://localhost:8000
