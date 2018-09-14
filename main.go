@@ -23,13 +23,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * Description:
- *   This is a small test program which demonstrates launching of a basic web server on port 8000.
- *   It has a main index page and just a couple of secondary pages.
- *   This test shows how to use templates and variables on each page.
+ *
+ * DESCRIPTION:
+ *
+ * This is a small test program written entirely in Go Language which demonstrates launching of a
+ * basic web server, and common functionality. It does the following:
+ *
+ *  * Launching of a basic web server on port 8000.
+ *  * This prototype has multiple pages, including login/logout functionality using cookies
+ *  * Login/Logout functionality is basic for the sake of this exercise. It uses local variables to check against,
+ *    but could easily be modified to add the users in a database - but that is a different exercise.
+ *  * This prototype utilizes templates and logic is built into the template pages.
+ *  * The "internal.html" page requires to be logged in.
+ *  * This prototype uses Gorilla libraries for secure cookies
+ *  * The prototype addresses 404 not found pages properly, and handles / and /index.html as the home page.
+ *  * The prototype addresses the correct way to deal with favicon.ico when running as http server
+ *
+ * REQUIREMENTS:
+ *
+ *  go get github.com/gorilla/securecookie
  *
  * 	TODO:
- * 		
+ *
  *		Add Dashboard Page
  *		Add CRUD Capability.
  *
@@ -45,13 +60,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gorilla/securecookie"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/gorilla/securecookie"
 )
 
 // Generic global variables to be used to manage template data for any html page.
@@ -89,14 +104,14 @@ type errorPageData struct {
 
 type internalPageData struct {
 	PageTitle string
-	LoggedIn bool
+	LoggedIn  bool
 	Username  string
 }
 
 type loginPageData struct {
 	PageTitle string
-	Username string
-	LoggedIn bool
+	Username  string
+	LoggedIn  bool
 }
 
 // greeting structure type definition. matches data in config.json
@@ -106,10 +121,10 @@ type config struct {
 	DeviceModel string
 }
 
-// Cookie stuff: 
+// Cookie stuff:
 var cookieHandler = securecookie.New(
-    securecookie.GenerateRandomKey(64),
-    securecookie.GenerateRandomKey(32))
+	securecookie.GenerateRandomKey(64),
+	securecookie.GenerateRandomKey(32))
 
 func main() {
 	fmt.Println("Test Website for single page with templates... launch http://localhost:8000")
@@ -128,7 +143,7 @@ func main() {
 	http.HandleFunc("/asic.html", handleAsicPage)
 	http.HandleFunc("/asic2.html", handleAsic2Page)
 
-	// Intenal pages (requiring login)  
+	// Intenal pages (requiring login)
 	http.HandleFunc("/login.html", handleLoginPage)
 	http.HandleFunc("/logout.html", handleLogoutPage)
 	http.HandleFunc("/internal.html", handleInternalPage)
@@ -139,9 +154,9 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 
-// Template functions. 
+// Template functions.
 
-// load all html templates into memory. 
+// load all html templates into memory.
 func loadTemplates() {
 	// Read in all the templates. (./www/*html)
 	var allFiles []string
@@ -186,57 +201,57 @@ func loadConfigJson() {
 	fmt.Printf("Got config data, Greeting: %s, Username: %s, DeviceModel: %s\n", c.Greeting, c.Username, c.DeviceModel)
 }
 
-// 
+//
 // Secure Cookie / Session Functions
 //
 
 func getUserName(request *http.Request) (userName string) {
-    if cookie, err := request.Cookie("session"); err == nil {
-        cookieValue := make(map[string]string)
-        if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
-            userName = cookieValue["name"]
-        }
-    }
-    return userName
+	if cookie, err := request.Cookie("session"); err == nil {
+		cookieValue := make(map[string]string)
+		if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
+			userName = cookieValue["name"]
+		}
+	}
+	return userName
 }
 
 func checkLoggedIn(request *http.Request) (state bool) {
-       if _, err := request.Cookie("session"); err == nil {
-            fmt.Printf("Cookie is set.... user IS logged in\n")
-            state = true
-        } else {
-            fmt.Printf("Cookie is not set... user NOT logged in\n")
-            state = false
-        }
+	if _, err := request.Cookie("session"); err == nil {
+		fmt.Printf("Cookie is set.... user IS logged in\n")
+		state = true
+	} else {
+		fmt.Printf("Cookie is not set... user NOT logged in\n")
+		state = false
+	}
 
-        return state
+	return state
 }
 
 func setSession(userName string, response http.ResponseWriter) {
-    value := map[string]string{
-        "name": userName,
-    }
-    if encoded, err := cookieHandler.Encode("session", value); err == nil {
-        cookie := &http.Cookie{
-            Name:  "session",
-            Value: encoded,
-            Path:  "/",
-        }
-        http.SetCookie(response, cookie)
-    }
+	value := map[string]string{
+		"name": userName,
+	}
+	if encoded, err := cookieHandler.Encode("session", value); err == nil {
+		cookie := &http.Cookie{
+			Name:  "session",
+			Value: encoded,
+			Path:  "/",
+		}
+		http.SetCookie(response, cookie)
+	}
 }
 
 func clearSession(response http.ResponseWriter) {
-    cookie := &http.Cookie{
-        Name:   "session",
-        Value:  "",
-        Path:   "/",
-        MaxAge: -1,
-    }
-    http.SetCookie(response, cookie)
+	cookie := &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	}
+	http.SetCookie(response, cookie)
 }
 
-// 
+//
 // HTML PAGE HANDLERS - One for each page.
 //
 
@@ -268,101 +283,97 @@ func handleIndexPage(w http.ResponseWriter, r *http.Request) {
 
 func handleLoginPage(w http.ResponseWriter, request *http.Request) {
 	PageTitle := "Login Page"
-	loggedIn := false					// the default value, not logged in yuet. 
-	var userName string 				// Placeholder for username in cookie (or typed in)
+	loggedIn := false   // the default value, not logged in yuet.
+	var userName string // Placeholder for username in cookie (or typed in)
 
-    // Simple validation here... 
-    // Verify username and password. 
+	// Simple validation here...
+	// Verify username and password.
 
-    fmt.Printf("\n\nSome debug -- method = %v\n", request.Method)
+	fmt.Printf("\n\nSome debug -- method = %v\n", request.Method)
 
-    
-    // Handle this page as GET request
-    if (request.Method == "GET") {
-        if (checkLoggedIn(request)) {
-            fmt.Printf("in handleLoginPage: We are already logged in.\n")
-            // since we are already logged in, we can display the login page with the fact that we are logged in already
-            // and return (stop processing)
-            userName = getUserName(request)
-            loggedIn = true
-            
-        } else {
-            fmt.Printf("in handleLoginPage: We are not logged in yet... setting session and continuing. \n")
-            // we dont' know if we are not logged in because no cookie or user is incorrect yet. 
-        }
+	// Handle this page as GET request
+	if request.Method == "GET" {
+		if checkLoggedIn(request) {
+			fmt.Printf("in handleLoginPage: We are already logged in.\n")
+			// since we are already logged in, we can display the login page with the fact that we are logged in already
+			// and return (stop processing)
+			userName = getUserName(request)
+			loggedIn = true
 
-        lpd := &loginPageData{PageTitle, userName, loggedIn}
-        display(w, "login.html", &lpd)
-        return
-    }
+		} else {
+			fmt.Printf("in handleLoginPage: We are not logged in yet... setting session and continuing. \n")
+			// we dont' know if we are not logged in because no cookie or user is incorrect yet.
+		}
 
-  
-  	// What remains is the logic when the form is submitted (POST)
-    fmt.Printf("Got login POST request... checking variables in the form\n")
-    name := request.FormValue("name")
-    pass := request.FormValue("password")
+		lpd := &loginPageData{PageTitle, userName, loggedIn}
+		display(w, "login.html", &lpd)
+		return
+	}
 
-    // check get or post. ... get returns nothing, post will fill the form variables. 
-    fmt.Printf("LoginHandler here... creds entered are: name: (%s), pass: (%s)\n", name, pass)
+	// What remains is the logic when the form is submitted (POST)
+	fmt.Printf("Got login POST request... checking variables in the form\n")
+	name := request.FormValue("name")
+	pass := request.FormValue("password")
 
-    //
-    // check validity of login... (We can get these from a database or whatever - 
-    // for testing, just use howie/123)
-    //
-    if (name == "howie" && pass == "123") {
-    	fmt.Printf("Username/Password entered matched required credentials... set session, etc. continuing\n")
+	// check get or post. ... get returns nothing, post will fill the form variables.
+	fmt.Printf("LoginHandler here... creds entered are: name: (%s), pass: (%s)\n", name, pass)
 
-    	// set the session secure cookie and display login success message. 
-    	setSession(name, w)
-    	loggedIn = true
-    } else {
-    	fmt.Printf("Username/Pass entered does not match required credentials\n")
-    	// display the login failure message and try again. (Logic is on the )
-    	// Display the login page... 
-    }
+	//
+	// check validity of login... (We can get these from a database or whatever -
+	// for testing, just use howie/123)
+	//
+	if name == "howie" && pass == "123" {
+		fmt.Printf("Username/Password entered matched required credentials... set session, etc. continuing\n")
 
-    userName = name
-    lpd := &loginPageData{PageTitle, userName, loggedIn}
-   	display(w, "login.html", &lpd)
-    return
+		// set the session secure cookie and display login success message.
+		setSession(name, w)
+		loggedIn = true
+	} else {
+		fmt.Printf("Username/Pass entered does not match required credentials\n")
+		// display the login failure message and try again. (Logic is on the )
+		// Display the login page...
+	}
+
+	userName = name
+	lpd := &loginPageData{PageTitle, userName, loggedIn}
+	display(w, "login.html", &lpd)
+	return
 }
 
 func handleLogoutPage(response http.ResponseWriter, request *http.Request) {
-    fmt.Printf("Got logout request... clearing cookies if they are set and redirecting back to index page\n")
+	fmt.Printf("Got logout request... clearing cookies if they are set and redirecting back to index page\n")
 
-    // Only need to clear the session if we are logged in. 
-     if (!checkLoggedIn(request)) {
-        fmt.Printf("logoutHandler: We are not logged in, no need to clear cookie - bounce back to index.\n")
-        http.Redirect(response, request, "/", 302)
-        return
-    }
+	// Only need to clear the session if we are logged in.
+	if !checkLoggedIn(request) {
+		fmt.Printf("logoutHandler: We are not logged in, no need to clear cookie - bounce back to index.\n")
+		http.Redirect(response, request, "/", 302)
+		return
+	}
 
-    // we are currently logged in, so clear session and return to home page. 
-    clearSession(response)
-    http.Redirect(response, request, "/", 302)
+	// we are currently logged in, so clear session and return to home page.
+	clearSession(response)
+	http.Redirect(response, request, "/", 302)
 }
 
-
 func handleInternalPage(w http.ResponseWriter, request *http.Request) {
-	var loggedIn bool		// This page is one which requires to be logged in first.
+	var loggedIn bool // This page is one which requires to be logged in first.
 
 	//userName := "How Grap"
 	PageTitle := "Internal Page"
 	userName := getUserName(request)
 
-	if (!checkLoggedIn(request)) {
-        fmt.Printf("internalPageHandler: We are not logged in yet.\n")
-        loggedIn = false
-    } else {
-    	fmt.Printf("internalPageHandler: We are logged in... coookie Username is: (%s) - go and display the internal page\n", userName)
+	if !checkLoggedIn(request) {
+		fmt.Printf("internalPageHandler: We are not logged in yet.\n")
+		loggedIn = false
+	} else {
+		fmt.Printf("internalPageHandler: We are logged in... coookie Username is: (%s) - go and display the internal page\n", userName)
 		loggedIn = true
-    }
+	}
 
 	internalPageData := &internalPageData{PageTitle, loggedIn, userName}
 	fmt.Printf("Handling internal.html page.  internalPageData = %v\n", internalPageData)
 	display(w, "internal.html", &internalPageData)
 }
-
 
 func handleAsicPage(w http.ResponseWriter, r *http.Request) {
 
@@ -398,5 +409,3 @@ func renderErrorPage(w http.ResponseWriter, errorMsg error) {
 
 	display(w, "error.html", &errorPageData)
 }
-
-
