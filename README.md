@@ -5,8 +5,7 @@ This is a small test program written entirely in Go Language which demonstrates 
 
  *   Launches a basic web server on port 8000.
  *   It has multiple pages, including login/logout functionality using cookies
- *   The Login/Logout functionality is basic for the sake of this exercise.  It uses local variables to check login credentials
- *      but could easily be modified to add the users in a database - but that is a different exercise.
+ *   The Login/Logout functionality is basic for the sake of this exercise.  It uses local variables to check login credentials but could easily be modified to add the users in a database - but that is a different exercise.
  *   This prototype utilizes templates and logic is built into the template pages. 
  *   The "internal.html" page requires to be logged in prior to displaying data from it. 
  *   This prototype uses Gorilla libraries for secure cookies
